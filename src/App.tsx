@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-const SCRAMBLE = "U L2 U2 D' F' L B2 R2 B D' R' L' F' U' L R2 B2 L2 R' F2";
-
 const FACE_STICKER_IDS = [
   [0, 1, 2, 3, 4, 5, 6, 7, 8],
   [10, 11, 12, 13, 14, 15, 16, 17, 18],
@@ -71,60 +69,61 @@ const EDGE_GROUPS = [
   ["s", "w"],
 ];
 
-// const ALGORITHMS = {
-//   CORNERS: {
-//     A: "BUFFER",
-//     B: "R D' R U' R' U' R U R' F' R U R' U' R' F R D R'",
-//     C: "F R U' R' U' R U R' F' R U R' U' R' F R F'",
-//     D: "F R' R U' R' U' R U R' F' R U R' U' R' F R R F'",
-//     E: "F' D R U' R' U' R U R' F' R U R' U' R' F R D' F",
-//     F: "F2 D R U' R' U' R U R' F' R U R' U' R' F R D' F2",
-//     G: "D R R U' R' U' R U R' F' R U R' U' R' F R R' D'",
-//     H: "D R U' R' U' R U R' F' R U R' U' R' F R D'",
-//     I: "R' R U' R' U' R U R' F' R U R' U' R' F R R",
-//     J: "R2 R U' R' U' R U R' F' R U R' U' R' F R R2",
-//     K: "R R U' R' U' R U R' F' R U R' U' R' F R R'",
-//     L: "R U' R' U' R U R' F' R U R' U' R' F R",
-//     M: "R' F R U' R' U' R U R' F' R U R' U' R' F R F' R",
-//     N: "BUFFER",
-//     O: "D' R R U' R' U' R U R' F' R U R' U' R' F R R' D",
-//     P: "D' R U' R' U' R U R' F' R U R' U' R' F R D",
-//     Q: "BUFFER",
-//     R: "F2 R U' R' U' R U R' F' R U R' U' R' F R F2",
-//     S: "D2 R R U' R' U' R U R' F' R U R' U' R' F R R' D2",
-//     T: "D2 R U' R' U' R U R' F' R U R' U' R' F R D2",
-//     U: "F' R U' R' U' R U R' F' R U R' U' R' F R F",
-//     V: "D' F' R U' R' U' R U R' F' R U R' U' R' F R F D",
-//     W: "D2 F' R U' R' U' R U R' F' R U R' U' R' F R F D2",
-//     X: "D F' R U' R' U' R U R' F' R U R' U' R' F R F D'",
-//   },
-//   EDGES: {
-//     a: "M2",
-//     b: "R' U R U' M2 U R' U' R",
-//     c: "U2 M' U2 M'",
-//     d: "L U' L' U M2 U' L U L'",
-//     e: "D M' U R2 U' M U R2 U' D' M2",
-//     f: "U R U' M2 U R' U'",
-//     g: "BUFFER",
-//     h: "U' L' U M2 U' L U",
-//     i: "B' R B M2 B' R' B",
-//     j: "R' B' R B M2 B' R' B R",
-//     k: "B' R' B M2 B' R B",
-//     l: "B' R2 B M2 B' R2 B",
-//     m: "B' R B U R2 U' M2 U R2 U' B' R' B",
-//     n: "U' L U M2 U' L' U",
-//     o: "M2 D U R2 U' M' U R2 U' M D'",
-//     p: "U R' U' M2 U R U'",
-//     q: "B L' B' M2 B L B'",
-//     r: "B L2 B' M2 B L2 B'",
-//     s: "B L B' M2 B L' B'",
-//     t: "L B L' B' M2 B L B' L'",
-//     u: "BUFFER",
-//     v: "U R2 U' M2 U R2 U'",
-//     w: "M U2 M U2",
-//     x: "U' L2 U M2 U' L2 U",
-//   },
-// };
+const ALGORITHMS = {
+  CORNERS: {
+    A: "BUFFER",
+    B: "R D' (Y) D R'",
+    C: "F (Y) F'",
+    D: "F R' (Y) R F'",
+    E: "BUFFER",
+    F: "F2 (Y) F2",
+    G: "D2 R (Y) R' D2",
+    H: "D2 (Y) D2",
+    I: "F' D (Y) D' F",
+    J: "F2 D (Y) D' F2",
+    K: "D R (Y) R' D'",
+    L: "D (Y) D",
+    M: "R' (Y) R",
+    N: "R2 (Y) R2",
+    O: "R (Y) R'",
+    P: "(Y)",
+    Q: "R' F (Y) F' R",
+    R: "BUFFER",
+    S: "D' R (Y) R' D",
+    T: "D' (Y) D",
+    U: "F' (Y) F",
+    V: "D' F' (Y) F D",
+    W: "D2 F' (Y) F D2",
+    X: "D F' (Y) F D'",
+  },
+  EDGES: {
+    a: "(M2)",
+    b: "R U R' U' (M2) U R U' R'",
+    c: "(U2 M') (U2 M')",
+    d: "L' U' L U (M2) U' L' U L",
+    e: "L' Uw' L' Uw (M2) Uw' L Uw L",
+    f: "L2 Uw' L' Uw (M2) Uw' L Uw L2",
+    g: "L Uw' L' Uw (M2) Uw' L Uw L'",
+    h: "Uw' L' Uw (M2) Uw' L Uw",
+    i: "U' (R' F' R) S (R' F R) S' U (M2)",
+    j: "U R U' (M2) U R' U'",
+    k: "BUFFER",
+    l: "U' L' U (M2) U' L U",
+    m: "R Uw R Uw' (M2) Uw R' Uw' R'",
+    n: "Uw R Uw' (M2) Uw R' Uw'",
+    o: "R' Uw R Uw' (M2) Uw R' Uw' R",
+    p: "R2 Uw R Uw' (M2) Uw R' Uw' R2",
+    q: "(U' M')x3 (U' M) (U' M')x4",
+    r: "U' L U (M2) U' L' U",
+    s: "(M2) U' S (R' F' R) S' (R' F R) U",
+    t: "U R' U' (M2) U R U'",
+    u: "BUFFER",
+    v: "U R2 U' (M2) U R2 U'",
+    w: "(M U2) (M U2)",
+    x: "U' L2 U (M2) U' L2 U",
+    y: "(D' Rw2 U) M2 (U' Rw2 D)",
+  },
+};
 
 const getSkeleton = (scramble: string) =>
   CUBE_FACE_IDS.map((row) =>
@@ -179,6 +178,39 @@ const getMoves = (
   });
 
   return { cornerMoves, edgeMoves };
+};
+
+const getScramble = (length = 20) => {
+  const faces = ["R", "L", "U", "D", "F", "B"];
+  const modifiers = ["", "'", "2"];
+
+  const axisMap = {
+    R: "X",
+    L: "X",
+    U: "Y",
+    D: "Y",
+    F: "Z",
+    B: "Z",
+  };
+
+  const result = [];
+  let prevFace = null;
+  let prevAxis = null;
+
+  while (result.length < length) {
+    const face = faces[Math.floor(Math.random() * faces.length)];
+    const axis = axisMap[face as keyof typeof axisMap];
+
+    if (face === prevFace || axis === prevAxis) continue;
+
+    const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
+    result.push(face + modifier);
+
+    prevFace = face;
+    prevAxis = axis;
+  }
+
+  return result.join(" ");
 };
 
 type Cube = number[][];
@@ -356,25 +388,25 @@ const rotate = (cube: Cube, algorithm: string): Cube => {
   }, cube);
 };
 
-const formatPairs = (path: string, type: "edge" | "corner" = "corner") => {
+const formatEdgePairs = (path: string) => {
   const map: Record<string, string> = {
-    C: "W",
-    W: "C",
-    I: "S",
-    S: "I",
+    c: "w",
+    w: "c",
+    i: "s",
+    s: "i",
   };
 
   return path
     .match(/.{1,2}/g)
     ?.map((pair) => {
-      if (type === "edge" && pair.length === 2) {
+      if (pair.length === 2) {
         const first = pair[0];
         const second = map[pair[1]] ?? pair[1];
-        return `(${first}${second})`;
+        return first + second;
       }
-      return `(${pair})`;
+      return pair;
     })
-    .join(" ");
+    .join("");
 };
 
 const getSolvedPath = (moves: string[], groups: string[][], buffer: string) => {
@@ -419,55 +451,124 @@ const getSolvedPath = (moves: string[], groups: string[][], buffer: string) => {
 };
 
 const App = () => {
-  const [scramble, setScramble] = useState(SCRAMBLE);
+  const [scramble, setScramble] = useState(getScramble());
   const skeleton = getSkeleton(scramble);
   const { cornerMoves, edgeMoves } = getMoves(scramble);
   const cornerSolvedPath = getSolvedPath(cornerMoves, CORNER_GROUPS, "A");
   const edgeSolvedPath = getSolvedPath(edgeMoves, EDGE_GROUPS, "u");
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 bg-zinc-950 p-4 font-bold">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-8 bg-zinc-950 p-4 font-bold">
       <input
         type="text"
         className="w-full rounded-lg border border-white p-4 text-center text-4xl font-bold text-white"
         value={scramble}
         onChange={(e) => setScramble(e.target.value)}
       />
-      <div className="grid grid-rows-3 gap-2">
-        {skeleton.map((layer, layerIndex) => (
-          <div key={layerIndex} className="grid grid-cols-4 gap-2">
-            {layer.map((face, faceIndex) => {
-              if (!face) return <div></div>;
-              return (
-                <div key={faceIndex} className="grid grid-cols-3 gap-1">
-                  {face.stickers.map((sticker) => {
-                    return (
-                      <div
-                        key={sticker!.id}
-                        className={`flex size-12 items-center justify-center rounded-md ${COLOR_MAP[sticker!.color as keyof typeof COLOR_MAP]}`}
-                      >
-                        {sticker!.label}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+      <div className="grid grid-cols-[2fr_1fr_1fr] gap-8">
+        <div className="flex flex-col items-center gap-8">
+          <div className="grid grid-rows-3 gap-2">
+            {skeleton.map((layer, layerIndex) => (
+              <div key={layerIndex} className="grid grid-cols-4 gap-2">
+                {layer.map((face, faceIndex) => {
+                  if (!face) return <div></div>;
+                  return (
+                    <div key={faceIndex} className="grid grid-cols-3 gap-1">
+                      {face.stickers.map((sticker) => {
+                        return (
+                          <div
+                            key={sticker!.id}
+                            className={`flex size-12 items-center justify-center rounded-md ${COLOR_MAP[sticker!.color as keyof typeof COLOR_MAP]}`}
+                          >
+                            {sticker!.label}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="flex flex-col items-center gap-4 font-bold text-white uppercase">
-        <div className="flex flex-col items-center gap-2">
-          <div>{JSON.stringify(edgeMoves)}</div>
-          <div className="text-4xl text-amber-500">
-            {formatPairs(edgeSolvedPath, "edge")}{" "}
-            {edgeSolvedPath.length % 2 ? "(Parity)" : ""}
+          <div className="flex flex-col items-center gap-2 font-bold text-white uppercase">
+            <div className="flex items-center gap-4 text-4xl text-amber-500">
+              {formatEdgePairs(edgeSolvedPath)
+                ?.match(/.{1,2}/g)
+                ?.map((pair) => (
+                  <div key={pair}>
+                    <span>{pair[0]}</span>
+                    <span
+                      className={
+                        "cwis".includes(pair[1]) ? "text-rose-500" : ""
+                      }
+                    >
+                      {pair[1]}
+                    </span>
+                  </div>
+                ))}
+              <span className="-ml-4 text-indigo-500">
+                {edgeSolvedPath.length % 2 ? "Y" : ""}
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-4xl text-sky-500">
+              {cornerSolvedPath?.match(/.{1,2}/g)?.map((pair) => (
+                <div key={pair}>{pair}</div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-2">
-          <div>{JSON.stringify(cornerMoves)}</div>
-          <div className="text-4xl text-amber-500">
-            {formatPairs(cornerSolvedPath)}
+        <div className="border-l border-white/10 pl-8 text-2xl text-white">
+          <div className="flex flex-col gap-2">
+            {formatEdgePairs(edgeSolvedPath)
+              ?.split("")
+              .map((letter, index) => (
+                <div
+                  key={letter + index}
+                  className={`grid grid-cols-[3rem_1fr] ${
+                    index && index % 2 === 0 && "pt-4"
+                  }`}
+                >
+                  <span
+                    className={`uppercase ${
+                      index % 2 && "cwis".includes(letter)
+                        ? "text-rose-500"
+                        : "text-amber-500"
+                    }`}
+                  >
+                    {letter}
+                  </span>
+                  <span>
+                    {ALGORITHMS.EDGES[letter as keyof typeof ALGORITHMS.EDGES]}
+                  </span>
+                </div>
+              ))}
+            {edgeSolvedPath.length % 2 ? (
+              <div className="grid grid-cols-[3rem_1fr]">
+                <span className="text-indigo-500">Y</span>
+                <span>{ALGORITHMS.EDGES.y}</span>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <div className="border-l border-white/10 pl-8 text-2xl text-white">
+          <div className="flex flex-col gap-2">
+            {cornerSolvedPath.split("").map((letter, index) => (
+              <div
+                key={letter + index}
+                className={`grid grid-cols-[3rem_1fr] ${
+                  index && index % 2 === 0 && "pt-4"
+                }`}
+              >
+                <span className="text-sky-500">{letter}</span>
+                <span>
+                  {
+                    ALGORITHMS.CORNERS[
+                      letter as keyof typeof ALGORITHMS.CORNERS
+                    ]
+                  }
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
