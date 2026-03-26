@@ -85,6 +85,13 @@ export const EDGE_GROUPS: string[][] = [
   ["s", "w"],
 ];
 
+export const PARITY_EDGES: Record<string, string> = {
+  c: "w",
+  w: "c",
+  i: "s",
+  s: "i",
+};
+
 export const SLICE_ROTATION_MAP: Record<
   string,
   { face: number; indices: number[] }[]

@@ -1,6 +1,8 @@
 import {
   CORNER_GROUPS,
+  EDGE_GROUPS,
   FACE_ROTATION_MAP,
+  PARITY_EDGES,
   SLICE_ROTATION_MAP,
   STICKERS,
 } from "./constants";
@@ -135,15 +137,33 @@ export const getSwappedStickers = (cube: number[][], algorithm: string) => {
   return { swappedCornerStickers, swappedEdgeStickers };
 };
 
+const removeAdjacentDuplicates = (circles: string[]) => {
+  const stack: string[] = [];
+
+  for (const currentCharacter of circles) {
+    if (stack.length > 0 && stack[stack.length - 1] === currentCharacter) {
+      stack.pop();
+    } else {
+      stack.push(currentCharacter);
+    }
+  }
+
+  return stack
+    .join("")
+    .match(/.{1,2}/g)
+    ?.join(" ");
+};
+
 export const getSolvedCornerCircles = (
   swappedStickers: string[],
   buffer: string,
 ) => {
   let startSticker = buffer;
+  let isNewCycle = false;
   const solvedCircles: string[] = [];
   const visitedCorners: number[] = [];
 
-  while (visitedCorners.length < 8) {
+  while (new Set(visitedCorners).size < 8) {
     const currentSticker = swappedStickers.find((sticker) =>
       sticker.startsWith(startSticker),
     );
@@ -153,31 +173,87 @@ export const getSolvedCornerCircles = (
         (_, index) => !visitedCorners.includes(index),
       );
       startSticker = filteredGroups[0][0];
+      isNewCycle = true;
       continue;
     }
 
     const [firstSticker, secondSticker] = currentSticker.split("-");
-    const firstCornerIndex = CORNER_GROUPS.findIndex((group) =>
+    const cornerIndex = CORNER_GROUPS.findIndex((group) =>
       group.includes(firstSticker),
     );
-    const secondCornerIndex = CORNER_GROUPS.findIndex((group) =>
-      group.includes(secondSticker),
-    );
 
-    solvedCircles.push(secondSticker);
-    visitedCorners.push(firstCornerIndex, secondCornerIndex);
-
-    startSticker = secondSticker;
+    if (visitedCorners.includes(cornerIndex)) {
+      const filteredGroups = CORNER_GROUPS.filter(
+        (_, index) => !visitedCorners.includes(index),
+      );
+      startSticker = filteredGroups[0][0];
+      if (isNewCycle) solvedCircles.push(firstSticker);
+      visitedCorners.push(cornerIndex);
+      isNewCycle = true;
+    } else {
+      if (firstSticker !== buffer) solvedCircles.push(firstSticker);
+      visitedCorners.push(cornerIndex);
+      startSticker = secondSticker;
+      if (new Set(visitedCorners).size === 8) solvedCircles.push(secondSticker);
+    }
   }
 
-  console.log(solvedCircles);
-
-  return solvedCircles;
+  return removeAdjacentDuplicates(solvedCircles);
 };
 
 export const getSolvedEdgeCircles = (
   swappedStickers: string[],
   buffer: string,
 ) => {
-  return [];
+  let startSticker = buffer;
+  let isNewCycle = false;
+  const solvedCircles: string[] = [];
+  const visitedEdges: number[] = [];
+
+  while (new Set(visitedEdges).size < 12) {
+    const currentSticker = swappedStickers.find((sticker) =>
+      sticker.startsWith(startSticker),
+    );
+
+    if (!currentSticker) {
+      const filteredGroups = EDGE_GROUPS.filter(
+        (_, index) => !visitedEdges.includes(index),
+      );
+      startSticker = filteredGroups[0][0];
+      isNewCycle = true;
+      continue;
+    }
+
+    const [firstSticker, secondSticker] = currentSticker.split("-");
+    const edgeIndex = EDGE_GROUPS.findIndex((group) =>
+      group.includes(firstSticker),
+    );
+
+    if (visitedEdges.includes(edgeIndex)) {
+      const filteredGroups = EDGE_GROUPS.filter(
+        (_, index) => !visitedEdges.includes(index),
+      );
+      startSticker = filteredGroups[0][0];
+      if (isNewCycle) solvedCircles.push(firstSticker);
+      visitedEdges.push(edgeIndex);
+      isNewCycle = true;
+    } else {
+      if (firstSticker !== buffer) solvedCircles.push(firstSticker);
+      visitedEdges.push(edgeIndex);
+      startSticker = secondSticker;
+      if (new Set(visitedEdges).size === 12 && secondSticker !== buffer)
+        solvedCircles.push(secondSticker);
+    }
+  }
+
+  const formattedCircles = removeAdjacentDuplicates(solvedCircles);
+  const convertedCircles = formattedCircles
+    ?.split(" ")
+    .map((pair) => {
+      const [firstSticker, secondSticker] = pair.split("");
+      return `${firstSticker}${PARITY_EDGES[secondSticker] || secondSticker || "y"}`;
+    })
+    .join(" ");
+
+  return convertedCircles;
 };
