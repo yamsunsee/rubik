@@ -1,4 +1,4 @@
-const FACE_STICKER_IDS = [
+export const FACE_STICKER_IDS: number[][] = [
   [0, 1, 2, 3, 4, 5, 6, 7, 8],
   [9, 10, 11, 12, 13, 14, 15, 16, 17],
   [18, 19, 20, 21, 22, 23, 24, 25, 26],
@@ -7,15 +7,24 @@ const FACE_STICKER_IDS = [
   [45, 46, 47, 48, 49, 50, 51, 52, 53],
 ];
 
-const CUBE_FACE_IDS = [
+export const CUBE_FACE_IDS: (number | null)[][] = [
   [null, 0, null, null],
   [1, 2, 3, 4],
   [null, 5, null, null],
 ];
 
-const FACE_COLOR_CODES = ["Y", "B", "R", "G", "O", "W"];
+export const FACE_COLOR_CODES: string[] = ["Y", "B", "R", "G", "O", "W"];
 
-const FACE_LABEL_CODES = [
+export const FACE_ROTATION_MAP: Record<string, number> = {
+  U: 0,
+  L: 1,
+  F: 2,
+  R: 3,
+  B: 4,
+  D: 5,
+};
+
+export const FACE_LABEL_CODES: string[] = [
   "AaBd_bDcC",
   "EeFh_fHgG",
   "IiJl_jLkK",
@@ -24,7 +33,7 @@ const FACE_LABEL_CODES = [
   "UuVx_vXwW",
 ];
 
-const BACKGROUND_COLOR_MAP = {
+export const BACKGROUND_COLOR_MAP: Record<string, string> = {
   Y: "bg-yellow-500",
   B: "bg-blue-500",
   R: "bg-red-500",
@@ -33,7 +42,7 @@ const BACKGROUND_COLOR_MAP = {
   W: "bg-white",
 };
 
-const TEXT_COLOR_MAP = {
+export const TEXT_COLOR_MAP: Record<string, string> = {
   Y: "text-yellow-500",
   B: "text-blue-500",
   R: "text-red-500",
@@ -42,14 +51,15 @@ const TEXT_COLOR_MAP = {
   W: "text-white",
 };
 
-const STICKERS = FACE_LABEL_CODES.flatMap((item, x) =>
-  item.split("").map((label) => ({
-    color: FACE_COLOR_CODES[x],
-    label,
-  })),
-);
+export const STICKERS: { color: string; label: string }[] =
+  FACE_LABEL_CODES.flatMap((item, x) =>
+    item.split("").map((label) => ({
+      color: FACE_COLOR_CODES[x],
+      label,
+    })),
+  );
 
-const CORNER_GROUPS = [
+export const CORNER_GROUPS: string[][] = [
   ["A", "E", "R"],
   ["B", "N", "Q"],
   ["C", "J", "M"],
@@ -60,7 +70,7 @@ const CORNER_GROUPS = [
   ["H", "S", "X"],
 ];
 
-const EDGE_GROUPS = [
+export const EDGE_GROUPS: string[][] = [
   ["a", "q"],
   ["b", "m"],
   ["c", "i"],
@@ -75,7 +85,49 @@ const EDGE_GROUPS = [
   ["s", "w"],
 ];
 
-const ALGORITHMS = {
+export const SLICE_ROTATION_MAP: Record<
+  string,
+  { face: number; indices: number[] }[]
+> = {
+  U: [
+    { face: 1, indices: [0, 1, 2] },
+    { face: 2, indices: [0, 1, 2] },
+    { face: 3, indices: [0, 1, 2] },
+    { face: 4, indices: [0, 1, 2] },
+  ],
+  L: [
+    { face: 0, indices: [0, 3, 6] },
+    { face: 4, indices: [8, 5, 2] },
+    { face: 5, indices: [0, 3, 6] },
+    { face: 2, indices: [0, 3, 6] },
+  ],
+  F: [
+    { face: 0, indices: [6, 7, 8] },
+    { face: 1, indices: [8, 5, 2] },
+    { face: 5, indices: [2, 1, 0] },
+    { face: 3, indices: [0, 3, 6] },
+  ],
+  R: [
+    { face: 0, indices: [2, 5, 8] },
+    { face: 2, indices: [2, 5, 8] },
+    { face: 5, indices: [2, 5, 8] },
+    { face: 4, indices: [6, 3, 0] },
+  ],
+  B: [
+    { face: 0, indices: [0, 1, 2] },
+    { face: 3, indices: [2, 5, 8] },
+    { face: 5, indices: [8, 7, 6] },
+    { face: 1, indices: [6, 3, 0] },
+  ],
+  D: [
+    { face: 1, indices: [6, 7, 8] },
+    { face: 4, indices: [6, 7, 8] },
+    { face: 3, indices: [6, 7, 8] },
+    { face: 2, indices: [6, 7, 8] },
+  ],
+};
+
+export const ALGORITHMS: Record<string, Record<string, string>> = {
   CORNERS: {
     A: "BUFFER",
     B: "R D' (Y) D R'",
@@ -129,17 +181,4 @@ const ALGORITHMS = {
     x: "U' L2 U (M2) U' L2 U",
     y: "(D' Rw2 U) M2 (U' Rw2 D)",
   },
-};
-
-export {
-  ALGORITHMS,
-  BACKGROUND_COLOR_MAP,
-  TEXT_COLOR_MAP,
-  CORNER_GROUPS,
-  CUBE_FACE_IDS,
-  EDGE_GROUPS,
-  FACE_COLOR_CODES,
-  FACE_LABEL_CODES,
-  FACE_STICKER_IDS,
-  STICKERS,
 };
