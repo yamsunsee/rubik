@@ -61,7 +61,7 @@ const App = () => {
         placeholder="Enter scramble..."
       />
       {scrambleString && (
-        <div className="grid w-full flex-1 gap-4 md:grid-cols-[2fr_1fr_1fr]">
+        <div className="grid w-full flex-1 gap-4 2xl:grid-cols-[2fr_1fr_1fr]">
           <div className="flex flex-col justify-between gap-4">
             <div className="grid grid-cols-4 gap-2">
               {CUBE_FACE_IDS.map((layer) => {
