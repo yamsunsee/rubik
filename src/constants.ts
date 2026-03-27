@@ -186,6 +186,6 @@ export const ALGORITHMS: Record<string, Record<string, string>> = {
     v: "U R2 U' (M2) U R2 U'",
     w: "(M U2) (M U2)",
     x: "U' L2 U (M2) U' L2 U",
-    y: "(D' Rw2 U) M2 (U' Rw2 D)",
+    y: "(D' L2 D) M2 (D' L2 D)",
   },
 };
