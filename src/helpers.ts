@@ -194,9 +194,13 @@ export const getSolvedCornerCircles = (
       if (firstSticker !== buffer) solvedCircles.push(firstSticker);
       visitedCorners.push(cornerIndex);
       startSticker = secondSticker;
-      if (new Set(visitedCorners).size === 8) solvedCircles.push(secondSticker);
+      if (new Set(visitedCorners).size === 8 && secondSticker !== buffer)
+        solvedCircles.push(secondSticker);
     }
   }
+
+  console.log(visitedCorners);
+  console.log(solvedCircles);
 
   return removeAdjacentDuplicates(solvedCircles);
 };

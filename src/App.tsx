@@ -16,6 +16,7 @@ import {
 } from "./helpers";
 // @ts-ignore
 import { randomScrambleForEvent } from "https://cdn.cubing.net/v0/js/cubing/scramble";
+import Timer from "./Timer";
 
 const App = () => {
   const [cube, setCube] = useState<number[][]>();
@@ -51,8 +52,8 @@ const App = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-950 p-4">
-      <div className="flex w-full flex-col gap-2">
-        <div className="flex items-center gap-2">
+      <div className="flex w-full flex-col gap-4">
+        <div className="flex items-center gap-4">
           <input
             value={scrambleString}
             onChange={(event) =>
@@ -74,8 +75,8 @@ const App = () => {
             Generate
           </button>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="grid w-full grid-cols-2 gap-2">
+        <div className="flex items-center gap-4">
+          <div className="grid w-full grid-cols-2 gap-4">
             <input
               value={solvedCornerString}
               onChange={(event) =>
@@ -133,7 +134,7 @@ const App = () => {
       <div
         className={cn(
           "grid w-full flex-1 gap-4",
-          isShowSolvedCircles && "2xl:grid-cols-[2fr_1fr_1fr]",
+          isShowSolvedCircles && "2xl:grid-cols-2",
         )}
       >
         <div className="flex flex-col justify-between gap-4">
@@ -210,7 +211,7 @@ const App = () => {
               <div className="text-2xl font-bold text-emerald-500 uppercase">
                 Labels
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-4">
                 {["corners", "edges"].map((option) => (
                   <button
                     key={`labels-${option}`}
@@ -233,7 +234,7 @@ const App = () => {
               <div className="text-2xl font-bold text-amber-500 uppercase">
                 Colors
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-4">
                 {["corners", "edges"].map((option) => (
                   <button
                     key={`highlight-${option}`}
@@ -255,61 +256,64 @@ const App = () => {
           </div>
         </div>
         {isShowSolvedCircles && (
-          <>
-            <div className="flex h-full flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-2xl font-bold">
-              <div className="text-emerald-500 uppercase">Edges</div>
-              <div>
-                {solvedEdgeCircles
-                  ?.replace(/\s/g, "")
-                  .split("")
-                  .map((item, index) => (
-                    <div
-                      key={`edge-${item}-${index}`}
-                      className={cn(
-                        "grid grid-cols-[2rem_1fr]",
-                        index % 2 && "mb-4",
-                      )}
-                    >
-                      <span
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex h-full flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-2xl font-bold">
+                <div className="text-emerald-500 uppercase">Edges</div>
+                <div>
+                  {solvedEdgeCircles
+                    ?.replace(/\s/g, "")
+                    .split("")
+                    .map((item, index) => (
+                      <div
+                        key={`edge-${item}-${index}`}
                         className={cn(
-                          "uppercase",
-                          "cwisy".includes(item) && index % 2
-                            ? "text-rose-500"
-                            : "text-sky-500",
+                          "grid grid-cols-[2rem_1fr]",
+                          index % 2 && "mb-4",
                         )}
                       >
-                        {item}
-                      </span>{" "}
-                      <span className="text-white">
-                        {ALGORITHMS.EDGES[item]}
-                      </span>
-                    </div>
-                  ))}
+                        <span
+                          className={cn(
+                            "uppercase",
+                            "cwisy".includes(item) && index % 2
+                              ? "text-rose-500"
+                              : "text-sky-500",
+                          )}
+                        >
+                          {item}
+                        </span>{" "}
+                        <span className="text-white">
+                          {ALGORITHMS.EDGES[item]}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              <div className="flex h-full flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-2xl font-bold">
+                <div className="text-amber-500 uppercase">Corners</div>
+                <div>
+                  {solvedCornerCircles
+                    ?.replace(/\s/g, "")
+                    .split("")
+                    .map((item, index) => (
+                      <div
+                        key={`corner-${item}-${index}`}
+                        className={cn(
+                          "grid grid-cols-[2rem_1fr]",
+                          index % 2 && "mb-4",
+                        )}
+                      >
+                        <span className="text-sky-500 uppercase">{item}</span>{" "}
+                        <span className="text-white">
+                          {ALGORITHMS.CORNERS[item]}
+                        </span>
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
-            <div className="flex h-full flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-2xl font-bold">
-              <div className="text-amber-500 uppercase">Corners</div>
-              <div>
-                {solvedCornerCircles
-                  ?.replace(/\s/g, "")
-                  .split("")
-                  .map((item, index) => (
-                    <div
-                      key={`corner-${item}-${index}`}
-                      className={cn(
-                        "grid grid-cols-[2rem_1fr]",
-                        index % 2 && "mb-4",
-                      )}
-                    >
-                      <span className="text-sky-500 uppercase">{item}</span>{" "}
-                      <span className="text-white">
-                        {ALGORITHMS.CORNERS[item]}
-                      </span>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </>
+            <Timer />
+          </div>
         )}
       </div>
     </div>
