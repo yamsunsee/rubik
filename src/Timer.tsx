@@ -14,7 +14,6 @@ const formatTime = (milliseconds: number): string => {
 const RubikTimer = () => {
   const [timerState, setTimerState] = useState<TimerState>("idle");
   const [elapsed, setElapsed] = useState<number>(0);
-  const [holdProgress, setHoldProgress] = useState<number>(0);
 
   const timerStateRef = useRef<TimerState>("idle");
   const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -36,7 +35,6 @@ const RubikTimer = () => {
         100,
         ((performance.now() - holdStartTimeRef.current!) / HOLD_DURATION) * 100,
       );
-      setHoldProgress(percentage);
       if (percentage < 100) {
         holdAnimationFrameRef.current = requestAnimationFrame(animateTick);
       }
@@ -44,12 +42,11 @@ const RubikTimer = () => {
     holdAnimationFrameRef.current = requestAnimationFrame(animateTick);
   }, []);
 
-  const cancelHoldProgressAnimation = useCallback((keepFull: boolean) => {
+  const cancelHoldProgressAnimation = useCallback(() => {
     if (holdAnimationFrameRef.current !== null) {
       cancelAnimationFrame(holdAnimationFrameRef.current);
       holdAnimationFrameRef.current = null;
     }
-    setHoldProgress(keepFull ? 100 : 0);
   }, []);
 
   const startTimerAnimation = useCallback(() => {
@@ -91,7 +88,7 @@ const RubikTimer = () => {
         startHoldProgressAnimation();
         holdTimerRef.current = setTimeout(() => {
           if (timerStateRef.current === "holding") {
-            cancelHoldProgressAnimation(true);
+            cancelHoldProgressAnimation();
             updateTimerState("ready");
           }
         }, HOLD_DURATION);
@@ -114,7 +111,7 @@ const RubikTimer = () => {
 
       if (currentState === "holding") {
         if (holdTimerRef.current !== null) clearTimeout(holdTimerRef.current);
-        cancelHoldProgressAnimation(false);
+        cancelHoldProgressAnimation();
         updateTimerState("idle");
         return;
       }
@@ -146,54 +143,16 @@ const RubikTimer = () => {
     stopped: "text-sky-500",
   };
 
-  const barColorClass: Record<TimerState, string> = {
-    idle: "bg-white",
-    holding: "bg-rose-500",
-    ready: "bg-emerald-500",
-    running: "bg-amber-500",
-    stopped: "bg-sky-500",
-  };
-
-  const statusText: Record<TimerState, string> = {
-    idle: "hold space to prepare",
-    holding: "keep holding...",
-    ready: "release space to start",
-    running: "press space to stop",
-    stopped: "hold space to reset",
-  };
-
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4 select-none">
-      <p
+      <div
         className={cn(
           "text-9xl leading-none font-bold tabular-nums transition-colors duration-100",
           timerColorClass[timerState],
         )}
       >
         {formatTime(elapsed)}
-      </p>
-
-      <div className="h-1 w-80 overflow-hidden rounded-full bg-white">
-        <div
-          className={cn(
-            "h-full rounded-full transition-colors duration-150",
-            barColorClass[timerState],
-          )}
-          style={{
-            width: `${holdProgress}%`,
-            transition: holdProgress === 0 ? "none" : undefined,
-          }}
-        />
       </div>
-
-      <p
-        className={cn(
-          "text-2xl font-bold tracking-widest uppercase transition-colors duration-100",
-          timerColorClass[timerState],
-        )}
-      >
-        {statusText[timerState]}
-      </p>
     </div>
   );
 };
