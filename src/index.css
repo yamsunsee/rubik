@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@layer base {
+  html {
+    font-size: clamp(10px, 0.8vw, 16px);
+  }
+}

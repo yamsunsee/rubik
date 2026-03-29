@@ -51,15 +51,15 @@ const App = () => {
   }, [swappedCornerStickers, swappedEdgeStickers]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-950 p-4">
-      <div className="flex w-full flex-col gap-4">
-        <div className="flex items-center gap-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-zinc-950 p-4">
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex items-center gap-2">
           <input
             value={scrambleString}
             onChange={(event) =>
               setScrambleString(event.target.value.toUpperCase())
             }
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center text-4xl font-bold text-white outline-none"
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white outline-none"
             placeholder="SCRAMBLE"
           />
           <button
@@ -70,13 +70,13 @@ const App = () => {
               setSolvedCornerString("");
               setSolvedEdgeString("");
             }}
-            className="w-60 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center text-4xl font-bold text-white uppercase outline-none"
+            className="w-60 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
           >
             Generate
           </button>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="grid w-full grid-cols-2 gap-4">
+        <div className="flex items-center gap-2">
+          <div className="grid w-full grid-cols-2 gap-2">
             <input
               value={solvedCornerString}
               onChange={(event) =>
@@ -89,7 +89,7 @@ const App = () => {
                 )
               }
               className={cn(
-                "w-full rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center text-4xl font-bold text-white outline-none",
+                "w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white outline-none",
                 isShowSolvedCircles &&
                   (solvedCornerString.replace(/ /g, "") ===
                   solvedCornerCircles?.replace(/ /g, "")
@@ -110,7 +110,7 @@ const App = () => {
                 )
               }
               className={cn(
-                "w-full rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center text-4xl font-bold text-white outline-none",
+                "w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white outline-none",
                 isShowSolvedCircles &&
                   (solvedEdgeString.toLowerCase().replace(/ /g, "") ===
                   solvedEdgeCircles?.replace(/ /g, "")
@@ -125,18 +125,13 @@ const App = () => {
               setIsShowSolvedCircles(!isShowSolvedCircles);
               setLabels(isShowSolvedCircles ? [] : ["corners", "edges"]);
             }}
-            className="w-60 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center text-4xl font-bold text-white uppercase outline-none"
+            className="w-60 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
           >
             {isShowSolvedCircles ? "Hide" : "Show"}
           </button>
         </div>
       </div>
-      <div
-        className={cn(
-          "grid w-full flex-1 gap-4",
-          isShowSolvedCircles && "2xl:grid-cols-2",
-        )}
-      >
+      <div className="grid w-full flex-1 grid-cols-2 gap-2">
         <div className="flex flex-col justify-between gap-4">
           <div className="flex h-full items-center justify-center">
             <div className="grid w-fit grid-cols-4 gap-2">
@@ -206,12 +201,12 @@ const App = () => {
               })}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
               <div className="text-2xl font-bold text-emerald-500 uppercase">
                 Labels
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 {["corners", "edges"].map((option) => (
                   <button
                     key={`labels-${option}`}
@@ -234,7 +229,7 @@ const App = () => {
               <div className="text-2xl font-bold text-amber-500 uppercase">
                 Colors
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 {["corners", "edges"].map((option) => (
                   <button
                     key={`highlight-${option}`}
@@ -255,9 +250,9 @@ const App = () => {
             </div>
           </div>
         </div>
-        {isShowSolvedCircles && (
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-2">
+          {isShowSolvedCircles && (
+            <div className="grid grid-cols-2 gap-2">
               <div className="flex h-full flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-2xl font-bold">
                 <div className="text-emerald-500 uppercase">Edges</div>
                 <div>
@@ -312,9 +307,9 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <Timer />
-          </div>
-        )}
+          )}
+          <Timer />
+        </div>
       </div>
     </div>
   );
