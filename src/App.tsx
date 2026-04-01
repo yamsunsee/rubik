@@ -21,6 +21,7 @@ import Timer from "./Timer";
 const App = () => {
   const [cube, setCube] = useState<number[][]>();
   const [scrambleString, setScrambleString] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [solvedCornerString, setSolvedCornerString] = useState<string>("");
   const [solvedEdgeString, setSolvedEdgeString] = useState<string>("");
   const [labels, setLabels] = useState<string[]>([]);
@@ -29,9 +30,11 @@ const App = () => {
     useState<boolean>(false);
 
   const generateScramble = async () => {
+    setIsGenerating(true);
     const generatedScramble = await randomScrambleForEvent("333");
     const newScrambleString = generatedScramble.toString();
     setScrambleString(newScrambleString);
+    setIsGenerating(false);
   };
 
   useEffect(() => {
@@ -45,7 +48,7 @@ const App = () => {
 
   const { solvedCornerCircles, solvedEdgeCircles } = useMemo(() => {
     return {
-      solvedCornerCircles: getSolvedCornerCircles(swappedCornerStickers, "A"),
+      solvedCornerCircles: getSolvedCornerCircles(swappedCornerStickers, "C"),
       solvedEdgeCircles: getSolvedEdgeCircles(swappedEdgeStickers, "u"),
     };
   }, [swappedCornerStickers, swappedEdgeStickers]);
@@ -60,9 +63,11 @@ const App = () => {
               setScrambleString(event.target.value.toUpperCase())
             }
             className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white outline-none"
-            placeholder="SCRAMBLE"
+            placeholder={isGenerating ? "GENERATING..." : "SCRAMBLE"}
+            disabled={isGenerating}
           />
           <button
+            disabled={isGenerating}
             onClick={async () => {
               await generateScramble();
               setIsShowSolvedCircles(false);
