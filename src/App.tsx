@@ -3,6 +3,7 @@ import {
   BACKGROUND_COLOR_MAP,
   CUBE_FACE_IDS,
   FACE_STICKER_IDS,
+  MEMORY_STRINGS,
   STICKERS,
   TEXT_COLOR_MAP,
 } from "./constants";
@@ -14,7 +15,8 @@ import {
   getSolvedEdgeCircles,
   getSwappedStickers,
 } from "./helpers";
-// @ts-ignore
+// eslint-disable-next-line
+// @ts-expect-error
 import { randomScrambleForEvent } from "https://cdn.cubing.net/v0/js/cubing/scramble";
 import Timer from "./Timer";
 
@@ -28,6 +30,11 @@ const App = () => {
   const [colors, setColors] = useState<string[]>(["corners", "edges"]);
   const [isShowSolvedCircles, setIsShowSolvedCircles] =
     useState<boolean>(false);
+  const [isMemoryMode, setIsMemoryMode] = useState<boolean>(false);
+  const [hoveredMemoryCell, setHoveredMemoryCell] = useState<{
+    row: number;
+    col: number;
+  }>();
 
   const generateScramble = async () => {
     setIsGenerating(true);
@@ -53,16 +60,77 @@ const App = () => {
     };
   }, [swappedCornerStickers, swappedEdgeStickers]);
 
+  if (isMemoryMode) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-zinc-950 p-4">
+        <div className="grid w-full flex-1 grid-rows-25 overflow-hidden rounded-lg border border-zinc-800 *:last:border-b-0">
+          {Array.from({ length: 25 }).map((_, row) => {
+            return (
+              <div
+                key={row}
+                className="grid grid-cols-26 border-b border-zinc-800 *:last:border-r-0"
+              >
+                {Array.from({ length: 26 }).map((_, col) => (
+                  <div
+                    key={`${row}-${col}`}
+                    onClick={() => {
+                      if (row + col === 0) setIsMemoryMode(false);
+                    }}
+                    onMouseEnter={() => {
+                      setHoveredMemoryCell({ row, col });
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredMemoryCell(undefined);
+                    }}
+                    className={cn(
+                      "relative flex items-center justify-center border-r border-zinc-800 text-center text-xs text-pretty text-white hover:bg-zinc-800 hover:text-amber-500",
+                      row * col === 0 && "bg-zinc-900 text-base font-bold",
+                      hoveredMemoryCell &&
+                        ((hoveredMemoryCell?.row === row &&
+                          hoveredMemoryCell?.col > col) ||
+                          (hoveredMemoryCell?.col === col &&
+                            hoveredMemoryCell?.row > row)) &&
+                        "bg-zinc-800 text-white",
+                    )}
+                  >
+                    {row + col === 0
+                      ? "SOLVE"
+                      : row === 0
+                        ? `_${String.fromCharCode(col + 64)}`
+                        : col === 0
+                          ? `${String.fromCharCode(row + 64)}_`
+                          : MEMORY_STRINGS[(row - 1) * 25 + (col - 1)]}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-zinc-950 p-4">
       <div className="flex w-full flex-col gap-2">
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-[2fr_6fr_2fr] items-center gap-2">
+          <button
+            onClick={() => {
+              setIsMemoryMode(true);
+            }}
+            className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
+          >
+            Memory
+          </button>
           <input
             value={scrambleString}
             onChange={(event) =>
               setScrambleString(event.target.value.toUpperCase())
             }
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white outline-none"
+            className={cn(
+              "w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white outline-none",
+              scrambleString && "border-amber-500 bg-amber-950 text-amber-500",
+            )}
             placeholder={isGenerating ? "GENERATING..." : "SCRAMBLE"}
             disabled={isGenerating}
           />
@@ -75,12 +143,12 @@ const App = () => {
               setSolvedCornerString("");
               setSolvedEdgeString("");
             }}
-            className="w-60 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
+            className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
           >
             Generate
           </button>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-[8fr_2fr] items-center gap-2">
           <div className="grid w-full grid-cols-2 gap-2">
             <input
               value={solvedCornerString}
@@ -130,7 +198,7 @@ const App = () => {
               setIsShowSolvedCircles(!isShowSolvedCircles);
               setLabels(isShowSolvedCircles ? [] : ["corners", "edges"]);
             }}
-            className="w-60 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
+            className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center text-4xl font-bold text-white uppercase outline-none"
           >
             {isShowSolvedCircles ? "Hide" : "Show"}
           </button>
