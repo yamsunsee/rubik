@@ -3,7 +3,6 @@ import {
   BACKGROUND_COLOR_MAP,
   CUBE_FACE_IDS,
   FACE_STICKER_IDS,
-  MEMORY_STRINGS,
   STICKERS,
   TEXT_COLOR_MAP,
 } from "./constants";
@@ -35,6 +34,25 @@ const App = () => {
     row: number;
     col: number;
   }>();
+  const [memoryStrings, setMemoryStrings] = useState<string[]>([]);
+
+  useEffect(() => {
+    const localMemoryStrings = localStorage.getItem("memoryStrings");
+    if (localMemoryStrings) {
+      setMemoryStrings(JSON.parse(localMemoryStrings));
+    }
+  }, []);
+
+  const handleMemoryStringChange = (
+    row: number,
+    col: number,
+    value: string,
+  ) => {
+    const newMemoryStrings = [...memoryStrings];
+    newMemoryStrings[(row - 1) * 25 + (col - 1)] = value;
+    setMemoryStrings(newMemoryStrings);
+    localStorage.setItem("memoryStrings", JSON.stringify(newMemoryStrings));
+  };
 
   const generateScramble = async () => {
     setIsGenerating(true);
@@ -74,13 +92,22 @@ const App = () => {
                   <div
                     key={`${row}-${col}`}
                     onClick={() => {
-                      if (row + col === 0) setIsMemoryMode(false);
+                      if (row + col === 0) {
+                        setIsMemoryMode(false);
+                      }
                     }}
                     onMouseEnter={() => {
                       setHoveredMemoryCell({ row, col });
                     }}
                     onMouseLeave={() => {
                       setHoveredMemoryCell(undefined);
+                    }}
+                    onDoubleClick={() => {
+                      const value = prompt(
+                        `${String.fromCharCode(row + 64)}${String.fromCharCode(col + 64)}`,
+                        memoryStrings[(row - 1) * 25 + (col - 1)],
+                      );
+                      handleMemoryStringChange(row, col, value ?? "");
                     }}
                     className={cn(
                       "relative flex items-center justify-center border-r border-zinc-800 text-center text-xs text-pretty text-white hover:bg-zinc-800 hover:text-amber-500",
@@ -91,6 +118,10 @@ const App = () => {
                           (hoveredMemoryCell?.col === col &&
                             hoveredMemoryCell?.row > row)) &&
                         "bg-zinc-800 text-white",
+                      hoveredMemoryCell &&
+                        ((hoveredMemoryCell?.row === row && col === 0) ||
+                          (hoveredMemoryCell?.col === col && row === 0)) &&
+                        "text-amber-500",
                     )}
                   >
                     {row + col === 0
@@ -99,7 +130,7 @@ const App = () => {
                         ? `_${String.fromCharCode(col + 64)}`
                         : col === 0
                           ? `${String.fromCharCode(row + 64)}_`
-                          : MEMORY_STRINGS[(row - 1) * 25 + (col - 1)]}
+                          : memoryStrings[(row - 1) * 25 + (col - 1)]}
                   </div>
                 ))}
               </div>
