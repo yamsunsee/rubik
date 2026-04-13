@@ -104,7 +104,7 @@ const App = () => {
                     }}
                     onDoubleClick={() => {
                       const value = prompt(
-                        `${String.fromCharCode(row + 64)}${String.fromCharCode(col + 64)}`,
+                        `Memory hint for ${String.fromCharCode(row + 64)}${String.fromCharCode(col + 64)}`,
                         memoryStrings[(row - 1) * 25 + (col - 1)],
                       );
                       handleMemoryStringChange(row, col, value ?? "");
@@ -412,7 +412,15 @@ const App = () => {
               </div>
             </div>
           )}
-          <Timer />
+          <Timer
+            onStopped={async () => {
+              await generateScramble();
+              setIsShowSolvedCircles(false);
+              setLabels([]);
+              setSolvedCornerString("");
+              setSolvedEdgeString("");
+            }}
+          />
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { twMerge as cn } from "tailwind-merge";
 
-const HOLD_DURATION = 1000;
+const HOLD_DURATION = 500;
 
 type TimerState = "idle" | "holding" | "ready" | "running" | "stopped";
 
@@ -11,7 +11,11 @@ const formatTime = (milliseconds: number): string => {
   return `${String(seconds).padStart(2, "0")}:${String(centiseconds).padStart(2, "0")}`;
 };
 
-const RubikTimer = () => {
+type TimerProps = {
+  onStopped: () => void;
+};
+
+const Timer = ({ onStopped }: TimerProps) => {
   const [timerState, setTimerState] = useState<TimerState>("idle");
   const [elapsed, setElapsed] = useState<number>(0);
 
@@ -80,6 +84,7 @@ const RubikTimer = () => {
         const finalElapsed = currentElapsedRef.current;
         setElapsed(finalElapsed);
         updateTimerState("stopped");
+        onStopped();
         return;
       }
 
@@ -157,4 +162,4 @@ const RubikTimer = () => {
   );
 };
 
-export default RubikTimer;
+export default Timer;
